@@ -84,6 +84,7 @@ class IndexController extends Controller
             $postdata = $this->request->getPost();
             // if (!(empty($postdata['product_name']) || empty($postdata['tags']) || empty($postdata['price']) || empty($postdata['stock']))) {
                 $this->mongo->updateOne(["_id" => new MongoDB\BSON\ObjectID($id)], ['$set' => $postdata]);
+                // $this->session->saved = '<span class="text-success">Saved</span>';
                 $this->response->redirect('/index/productsList');
             // }
         }
