@@ -55,7 +55,6 @@ class IndexController extends Controller
     {
         $resultt = $this->mongo->find();
         $this->view->allResult = $resultt;
-        // json_decode(json_encode($resultt), true);
         if ($this->request->getPost('search')) {
             $searchByProductName = $this->request->getPost('searchByProductName');
             $result = array();
