@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <title>List Product</title>
+    <style>
+        table tr td input {
+            border: none;
+            text-align: center;
+
+        }
+
+        table {
+            margin-top: 30px;
+        }
+
+        input {
+            padding: 20px;
+        }
+
+        .search {
+            padding: 10px;
+
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            text-align: center;
+        }
+
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            transition: opacity 500ms;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .overlay:target {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .popup {
+            margin: 70px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            width: 30%;
+            position: relative;
+            transition: all 5s ease-in-out;
+        }
+
+        .popup .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            transition: all 200ms;
+            font-size: 30px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #333;
+        }
+
+
+        .popup .content {
+            max-height: 30%;
+            overflow: auto;
+        }
+
+        @media screen and (max-width: 700px) {
+            .box {
+                width: 70%;
+            }
+
+            .popup {
+                width: 70%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Search by Product Name </h1>
+    <form action="/index/productsList" method="POST">
+        <a class="btn btn-danger search" href="index/">Add Product</a>
+        <input type="text" class="search" name="searchByProductName" placeholder="Search by product name" style="width: 50%; border-radius: 20px;">
+        <input type="submit" name="search" class="btn btn-success search" value="Search">
+    </form>
+    <?php if ($allResult) {
+        displayProducts($allResult);
+    } elseif ($result) {
+        displayProducts($result);
+    } else {
+        echo $error;
+    }
+
+
+
+
+
+    function displayProducts($allResult)
+    { ?>
+        <table>
+            <tr>
+                <thead class="thead-dark">
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th></th>
+                </thead>
+            </tr>
+            <?php foreach ($allResult as $k => $v) {
+                $length = count($v->variations->size); ?>
+
+                <tr>
+                    <td>
+                        <input type="text" value=<?php echo $v->product_name; ?>>
+                    </td>
+                    <td>
+                        <input type="text" value=<?php echo $v->product_category; ?>>
+                    </td>
+                    <td>
+                        <input type="number" value=<?php echo $v->price; ?>>
+                    </td>
+                    <td>
+                        <input type="number" value=<?php echo $v->stock; ?>>
+
+                    </td>
+                    <td>
+                        <a class="btn btn-dark" href="#<?php echo $v->_id; ?>">Quick View</a>
+
+                    </td>
+                    <td>
+                        <form action="/index/productsList" method="POST">
+                            <input type="hidden" name="id" value=<?php echo $v->_id ?>>
+                            <input type="submit" name="edit" class="btn btn-primary" value="Edit">
+
+                    </td>
+                    <td>
+                        <input type="submit" name="delete" class="btn btn-danger" value="Delete">
+                        </form>
+                    </td>
+                </tr>
+
+                <div id="<?php echo $v->_id; ?>" class="overlay">
+                    <div class="popup">
+                        <h2><?php echo $v->product_name ?></h2>
+                        <a class="close" href="#">&times;</a>
+                        <div class="content">
+                            <h4 class='text-danger'>Meta Fields</h4>
+                            <?php error_reporting(0); ?>
+                            <?php
+                            if($v->additional_fields){
+                            foreach ($v->additional_fields as $k1 => $v1) {
+                                echo $k1 . ':' . $v1;
+                            }
+                        }
+                        else{
+                            echo "No data available";
+                        }
+                            ?>
+                            <h4 class='text-danger'>Variations</h4>
+                            <p>
+                                <?php if ($length) { ?>
+                                    Size Available:
+                                    <?php for ($i = 0; $i < $length; $i++) { ?>
+                                    <?php echo $v->variations->size[$i] . ',';
+                                    } ?>
+                                    <br> Colours Available:
+                                    <?php for ($i = 0; $i < $length; $i++) { ?>
+                                    <?php echo $v->variations->color[$i] . ',';
+                                    } ?>
+                                    <br> Prices:
+                                    <?php for ($i = 0; $i < $length; $i++) { ?>
+                                <?php echo $v->variations->price[$i] . ',';
+                                    }
+                                } else {
+                                    echo "No data available";
+                                }
+                                ?>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                </div>
+            <?php } ?>
+        </table>
+    <?php }
+    ?>
+
+</body>
+
+</html>
+
+</body>
+
+</html>
