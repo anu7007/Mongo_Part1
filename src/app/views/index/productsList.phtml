@@ -129,35 +129,35 @@
             </tr>
             <?php foreach ($allResult as $k => $v) {
                 $length = count($v->variations->size); ?>
+                <form action="/index/productsList" method="POST">
+                    <tr>
+                        <td>
+                            <input name="product_name" type="text" value=<?php echo $v->product_name; ?>>
+                        </td>
+                        <td>
+                            <input name="tags" type="text" value=<?php echo $v->product_category; ?>>
+                        </td>
+                        <td>
+                            <input name="price" type="number" value=<?php echo $v->price; ?>>
+                        </td>
+                        <td>
+                            <input name="stock" type="number" value=<?php echo $v->stock; ?>>
 
-                <tr>
-                    <td>
-                        <input type="text" value=<?php echo $v->product_name; ?>>
-                    </td>
-                    <td>
-                        <input type="text" value=<?php echo $v->product_category; ?>>
-                    </td>
-                    <td>
-                        <input type="number" value=<?php echo $v->price; ?>>
-                    </td>
-                    <td>
-                        <input type="number" value=<?php echo $v->stock; ?>>
+                        </td>
+                        <td>
+                            <a class="btn btn-dark" href="#<?php echo $v->_id; ?>">Quick View</a>
 
-                    </td>
-                    <td>
-                        <a class="btn btn-dark" href="#<?php echo $v->_id; ?>">Quick View</a>
+                        </td>
+                        <td>
 
-                    </td>
-                    <td>
-                        <form action="/index/productsList" method="POST">
                             <input type="hidden" name="id" value=<?php echo $v->_id ?>>
                             <input type="submit" name="edit" class="btn btn-primary" value="Edit">
 
-                    </td>
-                    <td>
-                        <input type="submit" name="delete" class="btn btn-danger" value="Delete">
-                        </form>
-                    </td>
+                        </td>
+                        <td>
+                            <input type="submit" name="delete" class="btn btn-danger" value="Delete">
+                </form>
+                </td>
                 </tr>
 
                 <div id="<?php echo $v->_id; ?>" class="overlay">
@@ -168,14 +168,13 @@
                             <h4 class='text-danger'>Meta Fields</h4>
                             <?php error_reporting(0); ?>
                             <?php
-                            if($v->additional_fields){
-                            foreach ($v->additional_fields as $k1 => $v1) {
-                                echo $k1 . ':' . $v1;
+                            if ($v->additional_fields) {
+                                foreach ($v->additional_fields as $k1 => $v1) {
+                                    echo $k1 . ':' . $v1;
+                                }
+                            } else {
+                                echo "No data available";
                             }
-                        }
-                        else{
-                            echo "No data available";
-                        }
                             ?>
                             <h4 class='text-danger'>Variations</h4>
                             <p>

@@ -76,5 +76,16 @@ class IndexController extends Controller
 
             $this->response->redirect('/index/productsList');
         }
+        if ($this->request->getPost('edit')) {
+            $id = $this->request->getPost('id');
+            $data = $this->mongo->findOne([
+                "_id" => new MongoDB\BSON\ObjectID($id)
+            ]);
+            $postdata = $this->request->getPost();
+            // if (!(empty($postdata['product_name']) || empty($postdata['tags']) || empty($postdata['price']) || empty($postdata['stock']))) {
+                $this->mongo->updateOne(["_id" => new MongoDB\BSON\ObjectID($id)], ['$set' => $postdata]);
+                $this->response->redirect('/index/productsList');
+            // }
+        }
     }
 }
