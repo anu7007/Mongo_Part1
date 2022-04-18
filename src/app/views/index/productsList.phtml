@@ -104,19 +104,8 @@
         <input type="submit" name="search" class="btn btn-success search" value="Search">
     </form>
     <?php if ($allResult) {
-        displayProducts($allResult);
-    } elseif ($result) {
-        displayProducts($result);
-    } else {
-        echo $error;
-    }
-
-
-
-
-
-    function displayProducts($allResult)
-    { ?>
+        
+        error_reporting(0); ?>
         <table>
             <tr>
                 <thead class="thead-dark">
@@ -136,7 +125,7 @@
                             <input name="product_name" type="text" value=<?php echo $v->product_name; ?>>
                         </td>
                         <td>
-                            <input name="tags" type="text" value=<?php echo $v->product_category; ?>>
+                            <input name="product_category" type="text" value=<?php echo $v->product_category; ?>>
                         </td>
                         <td>
                             <input name="price" type="number" value=<?php echo $v->price; ?>>
@@ -161,7 +150,7 @@
                 </form>
                 </td>
                 <td>
-                
+
                 </td>
                 </tr>
 
@@ -209,6 +198,103 @@
             <?php } ?>
         </table>
     <?php }
+    if ($result) {
+        error_reporting(0);
+    ?>
+        <table>
+            <tr>
+                <thead class="thead-dark">
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th></th>
+                    <th></th>
+                </thead>
+            </tr>
+            <?php foreach ($result as $k => $v) {
+                $length = count($v->variations->size); ?>
+                <form action="/index/productsList" method="POST">
+                    <tr>
+                        <td>
+                            <input name="product_name" type="text" value=<?php echo $v->product_name; ?>>
+                        </td>
+                        <td>
+                            <input name="product_category" type="text" value=<?php echo $v->product_category; ?>>
+                        </td>
+                        <td>
+                            <input name="price" type="number" value=<?php echo $v->price; ?>>
+                        </td>
+                        <td>
+                            <input name="stock" type="number" value=<?php echo $v->stock; ?>>
+
+                        </td>
+                        <td>
+                            <a class="btn btn-dark" href="#<?php echo $v->_id; ?>">Quick View</a>
+
+                        </td>
+                        <td>
+
+                            <input type="hidden" name="id" value=<?php echo $v->_id ?>>
+                            <input type="submit" name="edit" class="btn btn-primary" value="Edit">
+
+                        </td>
+                        <td>
+                            <input type="submit" name="delete" class="btn btn-danger" value="Delete">
+
+                </form>
+                </td>
+                <td>
+
+                </td>
+                </tr>
+
+                <div id="<?php echo $v->_id; ?>" class="overlay">
+                    <div class="popup">
+                        <h2><?php echo $v->product_name ?></h2>
+                        <a class="close" href="#">&times;</a>
+                        <div class="content">
+                            <h4 class='text-danger'>Meta Fields</h4>
+                            <?php error_reporting(0); ?>
+                            <?php
+                            if ($v->additional_fields) {
+                                foreach ($v->additional_fields as $k1 => $v1) {
+                                    echo $k1 . ':' . $v1;
+                                }
+                            } else {
+                                echo "No data available";
+                            }
+                            ?>
+                            <h4 class='text-danger'>Variations</h4>
+                            <p>
+                                <?php if ($length) { ?>
+                                    Size Available:
+                                    <?php for ($i = 0; $i < $length; $i++) { ?>
+                                    <?php echo $v->variations->size[$i] . ',';
+                                    } ?>
+                                    <br> Colours Available:
+                                    <?php for ($i = 0; $i < $length; $i++) { ?>
+                                    <?php echo $v->variations->color[$i] . ',';
+                                    } ?>
+                                    <br> Prices:
+                                    <?php for ($i = 0; $i < $length; $i++) { ?>
+                                <?php echo $v->variations->price[$i] . ',';
+                                    }
+                                } else {
+                                    echo "No data available";
+                                }
+                                ?>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                </div>
+            <?php } ?>
+        </table>
+    <?php } else {
+        echo $error;
+    }
     ?>
 
 </body>

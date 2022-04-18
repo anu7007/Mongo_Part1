@@ -2,8 +2,6 @@
 
 use Phalcon\Mvc\Controller;
 
-use GuzzleHttp\Client;
-
 class IndexController extends Controller
 {
     public function indexAction()
@@ -25,17 +23,17 @@ class IndexController extends Controller
             );
 
             $postdata = $this->request->getPost();
-            if (!(empty($postdata['product_name']) || empty($postdata['tags']) || empty($postdata['price']) || empty($postdata['stock']))) {
+            if (!(empty($postdata['product_name']) || empty($postdata['product_category']) || empty($postdata['price']) || empty($postdata['stock']))) {
 
                 $success = $document = array(
                     "product_name" => $postdata['product_name'],
-                    "product_category" => $postdata['tags'],
+                    "product_category" => $postdata['product_category'],
                     "price" => $postdata['price'],
                     "stock" => $postdata['stock'],
                     "additional_fields" => $additional_fields,
                     "variations" => $variations
                 );
-                $this->mongo->insertOne($document);
+                $this->mongo->products->insertOne($document);
             }
 
             if ($success) {
@@ -53,8 +51,7 @@ class IndexController extends Controller
     }
     public function productsListAction()
     {
-        $resultt = $this->mongo->find();
-        $this->view->allResult = $resultt;
+        $resultt = $this->mongo->products->find();
         if ($this->request->getPost('search')) {
             $searchByProductName = $this->request->getPost('searchByProductName');
             $result = array();
@@ -67,10 +64,12 @@ class IndexController extends Controller
                 }
             }
             $this->view->result = $result;
+        } else {
+            $this->view->allResult = $resultt;
         }
         if ($this->request->getPost('delete')) {
             $id = $this->request->getPost('id');
-            $data = $this->mongo->deleteOne([
+            $data = $this->mongo->products->deleteOne([
                 "_id" => new MongoDB\BSON\ObjectID($id)
             ]);
 
@@ -78,14 +77,15 @@ class IndexController extends Controller
         }
         if ($this->request->getPost('edit')) {
             $id = $this->request->getPost('id');
-            $data = $this->mongo->findOne([
-                "_id" => new MongoDB\BSON\ObjectID($id)
-            ]);
+
             $postdata = $this->request->getPost();
+            // echo "<pre>";
+            // print_r($postdata);
+            // die;
             // if (!(empty($postdata['product_name']) || empty($postdata['tags']) || empty($postdata['price']) || empty($postdata['stock']))) {
-                $this->mongo->updateOne(["_id" => new MongoDB\BSON\ObjectID($id)], ['$set' => $postdata]);
-                // $this->session->saved = '<span class="text-success">Saved</span>';
-                $this->response->redirect('/index/productsList');
+            $this->mongo->products->updateOne(["_id" => new MongoDB\BSON\ObjectID($id)], ['$set' => $postdata]);
+            // $this->session->saved = '<span class="text-success">Saved</span>';
+            $this->response->redirect('/index/productsList');
             // }
         }
     }
