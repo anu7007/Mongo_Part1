@@ -18,6 +18,7 @@
             padding: 30px;
             /* text-align: center; */
         }
+
         table tr th {
             padding: 30px;
             /* text-align: center; */
@@ -33,24 +34,33 @@
 <body>
     <h1>List of Orders</h1>
     <form action="" method="POST">
-    <select name="filter_by_status" onchange="this.form.submit()">
-        <option value="0">List by Status</option>
-        <option value="paid">paid</option>
-        <option value="processing">processing</option>
-        <option value="dispatched">dispatched</option>
-        <option value="shipped">shipped</option>
-        <option value="refunded">refunded</option>
+        <select name="filter_by_status" onchange="this.form.submit()">
+            <option value="0">List by Status</option>
+            <option value="paid">paid</option>
+            <option value="processing">processing</option>
+            <option value="dispatched">dispatched</option>
+            <option value="shipped">shipped</option>
+            <option value="refunded">refunded</option>
 
-    </select>
-    <form action="" method="POST">
-    <select name="filter_by_date" onchange="this.form.submit()" class="dropdown">
-        <option value="0">List by Date</option>
-        <option value="today">Today</option>
-        <option value="this_week">This Week</option>
-        <option value="this_month">This Month</option>
-        <option value="custom">Custom</option>
+        </select>
 
-    </select>
+        <select name="filter_by_date" onchange="this.form.submit()" class="dropdown">
+            <option value="0">List by Date</option>
+            <option value="today">Today</option>
+            <option value="this_week">This Week</option>
+            <option value="this_month">This Month</option>
+            <option value="custom">Custom</option>
+
+        </select>
+        <div class="col-1">
+            <?php
+            if ($html) {
+                echo $html; ?>
+                <input type="submit" name="custom_submit">
+            <?php
+            }
+            ?>
+        </div>
     </form>
     <table>
         <tr>
@@ -84,6 +94,24 @@
             </tr>
         <?php } ?>
     </table>
+    </div>
+    <script type="text/javascript">
+        // add row 
+        $("#custom_date_field").click(function() {
+            var html = '';
+            html += '<div id="inputFormRow">';
+            html += '<div class="input-group mb-3">';
+            html += '<input type="text" name="field_name[]" class="form-control m-input" placeholder="Field Name" autocomplete="off">';
+            html += '<input type="text" name="field_value[]" class="form-control m-input" placeholder="Field Value" autocomplete="off">';
+
+            html += '<div class="input-group-append">';
+            html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
+            html += '</div>';
+            html += '</div>';
+
+            $('#newRow').append(html);
+        });
+    </script>
 </body>
 
 </html>

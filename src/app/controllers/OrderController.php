@@ -47,7 +47,7 @@ class OrderController extends Controller
                 $this->view->orders = $orders;
             }
             if ($filter_by_date == 'this_week') {
-                $start_date = date("Y/m/d", strtotime("-1 week"));
+                $start_date = date("Y/m/d", strtotime("this week"));
                 $end_date = date("Y/m/d");
                 $orders = array('order_date' => ['$gte' => $start_date, '$lte' => $end_date]);
                 $orders = $this->mongo->orders->find($orders);
@@ -64,6 +64,25 @@ class OrderController extends Controller
                 // die;
                 $this->view->orders = $orders;
             }
+            if ($filter_by_date == 'custom') {
+                $html = '<div class="row">
+                <div class="col">
+                <input type="text" name="start_date" placeholder="start date"/><br />
+                </col>
+                <div class="col">
+                <input type="text" name="end_date" placeholder="end date"/><br />
+                </div>
+            </div>';
+                $this->view->html = $html;
+            }
+        }
+        if ($this->request->getPost('custom_submit')) {
+            $start_date = $this->request->getPost('start_date');
+            $end_date = $this->request->getPost('end_date');
+            // die($start_date . ':' . $end_date);
+            $orders = array('order_date' => ['$gte' => $start_date, '$lte' => $end_date]);
+            $orders = $this->mongo->orders->find($orders);
+            $this->view->orders = $orders;
         }
 
 
