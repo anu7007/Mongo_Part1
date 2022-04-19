@@ -16,7 +16,7 @@ class OrderController extends Controller
                     "customer_name" => $postdata['customer_name'],
                     "quantity" => $postdata['quantity'],
                     "status" => "paid",
-                    "order_date" => date('d/m/Y')
+                    "order_date" => date('Y/m/d')
 
                 );
                 $this->mongo->orders->insertOne($postdata);
@@ -42,23 +42,26 @@ class OrderController extends Controller
         if ($this->request->getPost('filter_by_date')) {
             $filter_by_date = $this->request->getPost('filter_by_date');
             if ($filter_by_date == 'today') {
-                $orders = array('order_date' => date('d/m/Y'));
+                $orders = array('order_date' => date('Y/m/d'));
                 $orders = $this->mongo->orders->find($orders);
                 $this->view->orders = $orders;
             }
             if ($filter_by_date == 'this_week') {
-                $start_date = date("d/m/Y", strtotime("-1 week"));
-                $end_date = date("d/m/Y");
+                $start_date = date("Y/m/d", strtotime("-1 week"));
+                $end_date = date("Y/m/d");
                 $orders = array('order_date' => ['$gte' => $start_date, '$lte' => $end_date]);
                 $orders = $this->mongo->orders->find($orders);
                 $this->view->orders = $orders;
             }
             if ($filter_by_date == 'this_month') {
-                $start_date = date("d/m/Y", strtotime("first day of this month"));
-                $end_date = date("d/m/Y");
-                // die($end_date);
-                $orders = array('order_date' => ['$gte' => $start_date, '$lte' => $end_date]);
-                $orders = $this->mongo->orders->find($orders);
+                $start_date = date("Y/m/d", strtotime("first day of this month"));
+                $end_date = date("Y/m/d");
+                $order = array('order_date' => ['$gte' => $start_date, '$lte' => $end_date]);
+                $orders = $this->mongo->orders->find($order);
+                // foreach($orders as $k=>$v){
+                //     print_r($v);
+                // }
+                // die;
                 $this->view->orders = $orders;
             }
         }
